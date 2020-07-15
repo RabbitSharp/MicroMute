@@ -133,3 +133,4 @@ ClientBin/
 *.pfx
 *.publishsettings
 .vs
+/Images/ImageMagick

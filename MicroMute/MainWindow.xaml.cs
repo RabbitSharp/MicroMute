@@ -33,9 +33,9 @@ namespace MicroMute
 
         private void InitializeTray()
         {
-            var _ni = new NotifyIcon
+            _ni = new NotifyIcon
             {
-                Icon = new Icon("windmill.ico"), 
+                Icon = new Icon("microphone.ico"),
                 Visible = true
             };
 
@@ -60,24 +60,20 @@ namespace MicroMute
 
         private void InitializeHotkeys()
         {
-            //HotkeyManager.Current.AddOrReplace("Increment", Key.Pause, ModifierKeys.Control | ModifierKeys.Alt, OnIncrement);
-            var test = new KeyGesture(Key.Pause);
-            var test2 = new KeyGesture(Key.PageDown);
-            HotkeyManager.Current.AddOrReplace("Increment", test, OnIncrement);
-            HotkeyManager.Current.AddOrReplace("dasda", test2, OnIncrement2);
-
-
-            //HotkeyManager.SetRegisterGlobalHotkey();
+            var pauseKey = new KeyGesture(Key.Pause);
+            var pageDownKey = new KeyGesture(Key.PageDown);
+            HotkeyManager.Current.AddOrReplace("Mute", pauseKey, OnMute);
+            HotkeyManager.Current.AddOrReplace("Unmute", pageDownKey, OnUnmute);
         }
 
-        private void OnIncrement2(object? sender, HotkeyEventArgs e)
+        private void OnUnmute(object? sender, HotkeyEventArgs e)
         {
-            _ni.Icon = new Icon("windmill.ico");
+            _ni.Icon = new Icon("microphone.ico");
         }
 
-        private void OnIncrement(object? sender, HotkeyEventArgs e)
+        private void OnMute(object? sender, HotkeyEventArgs e)
         {
-            _ni.Icon = new Icon("reserved.ico");
+            _ni.Icon = new Icon("microphone_muted.ico");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
