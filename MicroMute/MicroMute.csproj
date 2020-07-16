@@ -18,10 +18,10 @@
 
   <ItemGroup>
     <Reference Include="System.Drawing.Common">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.4\System.Drawing.Common.dll</HintPath>
+      <HintPath>..\extLibs\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.4\System.Windows.Forms.dll</HintPath>
+      <HintPath>..\extLibs\System.Windows.Forms.dll</HintPath>
     </Reference>
   </ItemGroup>
 
