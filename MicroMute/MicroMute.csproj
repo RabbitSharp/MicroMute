@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="microphone.ico" />
+    <None Remove="microphone_muted.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="NHotkey.Wpf" Version="2.1.0" />
   </ItemGroup>
@@ -21,12 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="microphone.ico">
+    <Resource Include="microphone.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="microphone_muted.ico">
+    </Resource>
+    <Resource Include="microphone_muted.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Resource>
   </ItemGroup>
 
 </Project>

@@ -5,19 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MicroMute"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowState="Minimized">
+        Title="MicroMute" Height="403" Width="604" WindowState="Minimized" Icon="/microphone.ico" Background="#FF5696A7">
 
-    
-    <!--<Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+Alt+Add" Command="{Binding IncrementCommand}"
-                    HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Ctrl+Alt+Subtract" Command="{Binding DecrementCommand}"
-                    HotkeyManager.RegisterGlobalHotkey="True" />
-    </Window.InputBindings>-->
     <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="287,133,0,0" VerticalAlignment="Top" Click="Button_Click" />
-        <TextBlock HorizontalAlignment="Left" Margin="218,251,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Name="textBlock1"/>
-        <TextBox HorizontalAlignment="Left" Margin="307,206,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="UIElement_OnKeyDown" Name="textBox1"/>
-
+        <Button Content="Mute Microphone" HorizontalAlignment="Center" Margin="0,130,0,0" VerticalAlignment="Top" Click="ToggleMicMute" Height="71" Width="356" FontSize="20" Name="ButtonMute"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,230,0,0" Text="Use [Pause] Key to mute or unmute you microphone." TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
     </Grid>
 </Window>

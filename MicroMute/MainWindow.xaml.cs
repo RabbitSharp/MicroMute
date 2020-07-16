@@ -1,41 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using NAudio.CoreAudioApi;
 using NHotkey;
 using NHotkey.Wpf;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using Application = System.Windows.Application;
 
 namespace MicroMute
 {
     public partial class MainWindow : Window
     {
         private NotifyIcon _ni;
+        private bool _isMicMuted;
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeHotkeys();
             InitializeTray();
+            GetMicStatus();
         }
 
         private void InitializeTray()
         {
             _ni = new NotifyIcon
             {
-                Icon = new Icon("microphone.ico"),
+                Icon = CreateTrayIcon("microphone.ico"),
                 Visible = true
             };
 
@@ -61,36 +57,67 @@ namespace MicroMute
         private void InitializeHotkeys()
         {
             var pauseKey = new KeyGesture(Key.Pause);
-            var pageDownKey = new KeyGesture(Key.PageDown);
-            HotkeyManager.Current.AddOrReplace("Mute", pauseKey, OnMute);
-            HotkeyManager.Current.AddOrReplace("Unmute", pageDownKey, OnUnmute);
+            HotkeyManager.Current.AddOrReplace("ToggleMute", pauseKey, ToggleMicMute);
         }
 
-        private void OnUnmute(object? sender, HotkeyEventArgs e)
+        private void ToggleMicMute(object? sender, HotkeyEventArgs e)
         {
-            _ni.Icon = new Icon("microphone.ico");
+            ToggleMicMute();
         }
 
-        private void OnMute(object? sender, HotkeyEventArgs e)
+        private void ToggleMicMute(object sender, RoutedEventArgs e)
         {
-            _ni.Icon = new Icon("microphone_muted.ico");
+            ToggleMicMute();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ToggleMicMute()
         {
-            var test = new MMDeviceEnumerator();
-            var col = test.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-            //MediaCommands.MuteVolume
-            foreach (var device in col)
+            using var deviceEnumerator = new MMDeviceEnumerator();
+            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            _isMicMuted = !_isMicMuted;
+            foreach (var device in devices)
             {
-                device.AudioEndpointVolume.Mute = true;
+                device.AudioEndpointVolume.Mute = _isMicMuted;
+            }
+
+            SetStatus();
+        }
+
+        private void GetMicStatus()
+        {
+            using var deviceEnumerator = new MMDeviceEnumerator();
+            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            _isMicMuted = devices.Any(x => x.AudioEndpointVolume.Mute);
+            SetStatus();
+        }
+
+        private void SetStatus()
+        {
+            if (_isMicMuted)
+            {
+                _ni.Icon = CreateTrayIcon("microphone_muted.ico");
+                Background = new BrushConverter().ConvertFrom("#FFed3c46") as SolidColorBrush;
+                ButtonMute.Content = "Unmute Microphone";
+                Icon = new BitmapImage(new Uri("pack://application:,,,/microphone_muted.ico"));
+            }
+            else
+            {
+                _ni.Icon = CreateTrayIcon("microphone.ico");
+                Background = new BrushConverter().ConvertFrom("#FF5696A7") as SolidColorBrush;
+                ButtonMute.Content = "Mute Microphone";
+                Icon = new BitmapImage(new Uri("pack://application:,,,/microphone.ico"));
             }
         }
 
-
-        public void UIElement_OnKeyDown(object sender, KeyEventArgs e)
+        private Icon CreateTrayIcon(string fileName)
         {
-            textBlock1.Text = "You Entered: " + textBox1.Text;
+            var iconUri = new Uri($"pack://application:,,,/{fileName}");
+            using var iconStream = Application.GetResourceStream(iconUri)?.Stream;
+            if (iconStream == null)
+            {
+                throw new IOException($"'{fileName}' could not be found.");
+            }
+            return new Icon(iconStream);
         }
     }
 }
