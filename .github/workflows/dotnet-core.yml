@@ -29,4 +29,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: micro-mute-${{github.run_number}}
-        path: ~\**\publish\*
+        path: .\**\publish\*
