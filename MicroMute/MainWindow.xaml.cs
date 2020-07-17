@@ -16,7 +16,7 @@ namespace MicroMute
 {
     public partial class MainWindow : Window
     {
-        private NotifyIcon _ni;
+        private NotifyIcon? _ni;
         private bool _isMicMuted;
 
         public MainWindow()
@@ -95,14 +95,14 @@ namespace MicroMute
         {
             if (_isMicMuted)
             {
-                _ni.Icon = CreateTrayIcon("microphone_muted.ico");
+                _ni!.Icon = CreateTrayIcon("microphone_muted.ico");
                 Background = new BrushConverter().ConvertFrom("#FFed3c46") as SolidColorBrush;
                 ButtonMute.Content = "Unmute Microphone";
                 Icon = new BitmapImage(new Uri("pack://application:,,,/microphone_muted.ico"));
             }
             else
             {
-                _ni.Icon = CreateTrayIcon("microphone.ico");
+                _ni!.Icon = CreateTrayIcon("microphone.ico");
                 Background = new BrushConverter().ConvertFrom("#FF5696A7") as SolidColorBrush;
                 ButtonMute.Content = "Mute Microphone";
                 Icon = new BitmapImage(new Uri("pack://application:,,,/microphone.ico"));
