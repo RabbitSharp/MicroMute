@@ -73,7 +73,7 @@ namespace MicroMute
         private void ToggleMicMute()
         {
             using var deviceEnumerator = new MMDeviceEnumerator();
-            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
             _isMicMuted = !_isMicMuted;
             foreach (var device in devices)
             {
@@ -86,7 +86,7 @@ namespace MicroMute
         private void GetMicStatus()
         {
             using var deviceEnumerator = new MMDeviceEnumerator();
-            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
             _isMicMuted = devices.Any(x => x.AudioEndpointVolume.Mute);
             SetStatus();
         }
