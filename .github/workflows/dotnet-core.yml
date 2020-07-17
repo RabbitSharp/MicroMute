@@ -25,3 +25,8 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Publish
       run: dotnet publish -p:PublishProfile=Properties\PublishProfiles\FolderProfile.pubxml
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: micro-mute-${{github.run_number}}
+        path: .\**\publish\*
