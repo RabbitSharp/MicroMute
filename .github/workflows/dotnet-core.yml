@@ -28,5 +28,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: micro-mute
-        path: \MicroMute\MicroMute\bin\Release\netcoreapp3.1\publish\*
+        name: micro-mute-${{github.run_number}}
+        path: D:\a\MicroMute\MicroMute\MicroMute\bin\Release\netcoreapp3.1\publish\*
