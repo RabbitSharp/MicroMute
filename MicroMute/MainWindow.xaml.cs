@@ -16,7 +16,7 @@ namespace MicroMute
 {
     public partial class MainWindow : Window
     {
-        private NotifyIcon? _ni;
+        private NotifyIcon _ni;
         private bool _isMicMuted;
 
         public MainWindow()
@@ -60,7 +60,7 @@ namespace MicroMute
             HotkeyManager.Current.AddOrReplace("ToggleMute", pauseKey, ToggleMicMute);
         }
 
-        private void ToggleMicMute(object? sender, HotkeyEventArgs e)
+        private void ToggleMicMute(object sender, HotkeyEventArgs e)
         {
             ToggleMicMute();
         }
@@ -72,37 +72,41 @@ namespace MicroMute
 
         private void ToggleMicMute()
         {
-            using var deviceEnumerator = new MMDeviceEnumerator();
-            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
-            _isMicMuted = !_isMicMuted;
-            foreach (var device in devices)
+            using (var deviceEnumerator = new MMDeviceEnumerator())
             {
-                device.AudioEndpointVolume.Mute = _isMicMuted;
-            }
+                var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+                _isMicMuted = !_isMicMuted;
+                foreach (var device in devices)
+                {
+                    device.AudioEndpointVolume.Mute = _isMicMuted;
+                }
 
-            SetStatus();
+                SetStatus();
+            }
         }
 
         private void GetMicStatus()
         {
-            using var deviceEnumerator = new MMDeviceEnumerator();
-            var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
-            _isMicMuted = devices.Any(x => x.AudioEndpointVolume.Mute);
-            SetStatus();
+            using (var deviceEnumerator = new MMDeviceEnumerator())
+            {
+                var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+                _isMicMuted = devices.Any(x => x.AudioEndpointVolume.Mute);
+                SetStatus();
+            }
         }
 
         private void SetStatus()
         {
             if (_isMicMuted)
             {
-                _ni!.Icon = CreateTrayIcon("microphone_muted.ico");
+                _ni.Icon = CreateTrayIcon("microphone_muted.ico");
                 Background = new BrushConverter().ConvertFrom("#FFed3c46") as SolidColorBrush;
                 ButtonMute.Content = "Unmute Microphone";
                 Icon = new BitmapImage(new Uri("pack://application:,,,/microphone_muted.ico"));
             }
             else
             {
-                _ni!.Icon = CreateTrayIcon("microphone.ico");
+                _ni.Icon = CreateTrayIcon("microphone.ico");
                 Background = new BrushConverter().ConvertFrom("#FF5696A7") as SolidColorBrush;
                 ButtonMute.Content = "Mute Microphone";
                 Icon = new BitmapImage(new Uri("pack://application:,,,/microphone.ico"));
@@ -112,12 +116,14 @@ namespace MicroMute
         private Icon CreateTrayIcon(string fileName)
         {
             var iconUri = new Uri($"pack://application:,,,/{fileName}");
-            using var iconStream = Application.GetResourceStream(iconUri)?.Stream;
-            if (iconStream == null)
+            using (var iconStream = Application.GetResourceStream(iconUri)?.Stream)
             {
-                throw new IOException($"'{fileName}' could not be found.");
+                if (iconStream == null)
+                {
+                    throw new IOException($"'{fileName}' could not be found.");
+                }
+                return new Icon(iconStream);
             }
-            return new Icon(iconStream);
         }
     }
 }
