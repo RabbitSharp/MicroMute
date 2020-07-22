@@ -2,7 +2,7 @@
 ## Introduction
 This small tool enables you to mute your microphone with a global shortcut and to display the current status easyly.
 ## Requirements
-* Windows 10
+* Windows 10 x64
 * [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/current/runtime)
 ## Usage
 The application starts minimized and is displayed in the tray.<br/><br/>
