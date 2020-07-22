@@ -10,5 +10,6 @@
     <Grid>
         <Button Content="Mute Microphone" HorizontalAlignment="Center" Margin="0,130,0,0" VerticalAlignment="Top" Click="ToggleMicMute" Height="71" Width="356" FontSize="20" Name="ButtonMute"/>
         <TextBlock HorizontalAlignment="Center" Margin="0,230,0,0" Text="Use [Pause] Key to mute or unmute you microphone." TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
+        <CheckBox x:Name="AutostartCheckBox" IsChecked="{Binding AutostartIsChecked, Mode=TwoWay}" Content="Autostart" Margin="0,0,10,10" HorizontalAlignment="Right" Width="69" Height="15" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

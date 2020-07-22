@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -10,21 +12,25 @@ using NHotkey.Wpf;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Application = System.Windows.Application;
 
 namespace MicroMute
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private NotifyIcon? _ni;
         private bool _isMicMuted;
+        private bool _autostartIsChecked;
 
         public MainWindow()
         {
             InitializeComponent();
+            InitializeAutostartValue();
             InitializeHotkeys();
             InitializeTray();
             GetMicStatus();
+            DataContext = this;
         }
 
         private void InitializeTray()
@@ -118,6 +124,56 @@ namespace MicroMute
                 throw new IOException($"'{fileName}' could not be found.");
             }
             return new Icon(iconStream);
+        }
+
+        private void ToggleAutostartSetting()
+        {
+            var pathToExecutable = GetPathToExecutable();
+            var filename = Path.GetFileNameWithoutExtension(pathToExecutable);
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            var regValue = key.GetValue(filename);
+            if (regValue == null)
+            {
+                key.SetValue(filename, pathToExecutable);
+                _autostartIsChecked = true;
+            }
+            else
+            {
+                key.DeleteValue(filename);
+                _autostartIsChecked = false;
+            }
+        }
+
+        private void InitializeAutostartValue()
+        {
+            var pathToExecutable = GetPathToExecutable();
+            var filename = Path.GetFileNameWithoutExtension(pathToExecutable);
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+            var regValue = key.GetValue(filename);
+            _autostartIsChecked = regValue != null;
+        }
+
+        private string GetPathToExecutable()
+        {
+            using var currentProcess = Process.GetCurrentProcess();
+            return currentProcess.MainModule.FileName;
+        }
+
+        public bool AutostartIsChecked
+        {
+            get => _autostartIsChecked;
+            set
+            {
+                ToggleAutostartSetting();
+                OnPropertyChanged(nameof(AutostartIsChecked));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
