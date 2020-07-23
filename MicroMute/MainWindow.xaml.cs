@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -12,7 +11,6 @@ using NHotkey.Wpf;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using Application = System.Windows.Application;
 
 namespace MicroMute
@@ -20,13 +18,15 @@ namespace MicroMute
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private NotifyIcon? _ni;
+        private readonly AutostartSetting _autostartSetting;
         private bool _isMicMuted;
         private bool _autostartIsChecked;
 
         public MainWindow()
         {
             InitializeComponent();
-            InitializeAutostartValue();
+            _autostartSetting = new AutostartSetting();
+            _autostartIsChecked = _autostartSetting.GetCurrentState();
             InitializeHotkeys();
             InitializeTray();
             GetMicStatus();
@@ -126,45 +126,12 @@ namespace MicroMute
             return new Icon(iconStream);
         }
 
-        private void ToggleAutostartSetting()
-        {
-            var pathToExecutable = GetPathToExecutable();
-            var filename = Path.GetFileNameWithoutExtension(pathToExecutable);
-            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-            var regValue = key.GetValue(filename);
-            if (regValue == null)
-            {
-                key.SetValue(filename, pathToExecutable);
-                _autostartIsChecked = true;
-            }
-            else
-            {
-                key.DeleteValue(filename);
-                _autostartIsChecked = false;
-            }
-        }
-
-        private void InitializeAutostartValue()
-        {
-            var pathToExecutable = GetPathToExecutable();
-            var filename = Path.GetFileNameWithoutExtension(pathToExecutable);
-            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
-            var regValue = key.GetValue(filename);
-            _autostartIsChecked = regValue != null;
-        }
-
-        private string GetPathToExecutable()
-        {
-            using var currentProcess = Process.GetCurrentProcess();
-            return currentProcess.MainModule.FileName;
-        }
-
         public bool AutostartIsChecked
         {
             get => _autostartIsChecked;
             set
             {
-                ToggleAutostartSetting();
+                _autostartIsChecked = _autostartSetting.ToggleState();
                 OnPropertyChanged(nameof(AutostartIsChecked));
             }
         }
