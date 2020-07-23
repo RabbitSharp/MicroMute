@@ -13,3 +13,5 @@ With a double click on the tray icon the application can be opened in window mod
 ![full-window](Docs/full-window.png "Full Window Screen")<br/><br/>
 All your microphones are muted with the `Pause`-key, alternatively the mute/unmute button can also be used.<br/><br/>
 ![full-window-muted](Docs/full-window-muted.png "Full Window Screen Muted")
+### Autostart
+By setting the autostart checkbox, you can run the application automatically after a restart from the current location.
