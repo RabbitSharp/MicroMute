@@ -6,6 +6,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>microphone.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
+    <Version>1.0</Version>
+    <Authors>Marcel</Authors>
   </PropertyGroup>
 
   <ItemGroup>
