@@ -18,23 +18,41 @@ namespace MicroMute
 
         public bool GetCurrentState()
         {
-            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
-            var regValue = key.GetValue(_fileName);
-            return regValue != null;
-        }
-
-        public bool ToggleState()
-        {
-            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-            var regValue = key.GetValue(_fileName);
+            var regValue = GetRegValue();
             if (regValue == null)
             {
-                key.SetValue(_fileName, _filePath);
-                return true;
+                return false;
             }
 
+            if (regValue != _filePath)
+            {
+                UpdateRegValue(_filePath);
+            }
+
+            return true;
+        }
+
+        public void EnableAutostart()
+        {
+            UpdateRegValue(_filePath);
+        }
+
+        public void DisableAutostart()
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
             key.DeleteValue(_fileName);
-            return false;
+        }
+
+        private string? GetRegValue()
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+            return key.GetValue(_fileName) as string;
+        }
+
+        private void UpdateRegValue(string value)
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            key.SetValue(_fileName, value);
         }
     }
 }

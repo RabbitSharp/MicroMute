@@ -131,7 +131,15 @@ namespace MicroMute
             get => _autostartIsChecked;
             set
             {
-                _autostartIsChecked = _autostartSetting.ToggleState();
+                _autostartIsChecked = value;
+                if (_autostartIsChecked)
+                {
+                    _autostartSetting.EnableAutostart();
+                }
+                else
+                {
+                    _autostartSetting.DisableAutostart();
+                }
                 OnPropertyChanged(nameof(AutostartIsChecked));
             }
         }
