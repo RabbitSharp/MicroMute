@@ -10,6 +10,7 @@ using NHotkey;
 using NHotkey.Wpf;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
 
@@ -21,6 +22,7 @@ namespace MicroMute
         private readonly AutostartSetting _autostartSetting;
         private bool _isMicMuted;
         private bool _autostartIsChecked;
+        private string? _windowTitle;
 
         public MainWindow()
         {
@@ -52,10 +54,8 @@ namespace MicroMute
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == WindowState.Minimized)
-            {
+            if (WindowState == WindowState.Minimized) 
                 Hide();
-            }
 
             base.OnStateChanged(e);
         }
@@ -81,11 +81,8 @@ namespace MicroMute
             using var deviceEnumerator = new MMDeviceEnumerator();
             var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
             _isMicMuted = !_isMicMuted;
-            foreach (var device in devices)
-            {
+            foreach (var device in devices) 
                 device.AudioEndpointVolume.Mute = _isMicMuted;
-            }
-
             SetStatus();
         }
 
@@ -120,10 +117,16 @@ namespace MicroMute
             var iconUri = new Uri($"pack://application:,,,/{fileName}");
             using var iconStream = Application.GetResourceStream(iconUri)?.Stream;
             if (iconStream == null)
-            {
                 throw new IOException($"'{fileName}' could not be found.");
-            }
             return new Icon(iconStream);
+        }
+
+        public string WindowTitle => _windowTitle ??= $"MicroMute {GetVersion()}";
+
+        private string? GetVersion()
+        {
+            var customAttribute = typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+            return customAttribute?.InformationalVersion;
         }
 
         public bool AutostartIsChecked
@@ -133,13 +136,10 @@ namespace MicroMute
             {
                 _autostartIsChecked = value;
                 if (_autostartIsChecked)
-                {
                     _autostartSetting.EnableAutostart();
-                }
                 else
-                {
                     _autostartSetting.DisableAutostart();
-                }
+
                 OnPropertyChanged(nameof(AutostartIsChecked));
             }
         }
