@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MicroMute"
         mc:Ignorable="d"
-        Title="MicroMute" Height="403" Width="604" WindowState="Minimized" Icon="/microphone.ico" Background="#FF5696A7">
+        Title="{Binding WindowTitle, Mode=OneTime}" Height="403" Width="604" WindowState="Minimized" Icon="/microphone.ico" Background="#FF5696A7">
 
     <Grid>
         <Button Content="Mute Microphone" HorizontalAlignment="Center" Margin="0,130,0,0" VerticalAlignment="Top" Click="ToggleMicMute" Height="71" Width="356" FontSize="20" Name="ButtonMute"/>
