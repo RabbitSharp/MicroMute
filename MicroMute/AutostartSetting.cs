@@ -20,14 +20,10 @@ namespace MicroMute
         {
             var regValue = GetRegValue();
             if (regValue == null)
-            {
                 return false;
-            }
 
-            if (regValue != _filePath)
-            {
+            if (regValue != _filePath) 
                 UpdateRegValue(_filePath);
-            }
 
             return true;
         }
